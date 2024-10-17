@@ -19,11 +19,10 @@ const { values } = parseArgs({
 const wallet = Wallet.createRandom();
 const account = wallet.address;
 const messageBytes = getBytes(`0x${values.message}`);
-
 const eipCompatibleMessage = hashMessage(messageBytes).replace("0x", "");
 const signature = await wallet.signMessage(messageBytes);
 
-console.log("Raw Message:", values.message);
-console.log("EIP-191 Message:", eipCompatibleMessage);
+console.log("Input Message:", values.message);
+console.log("EIP-191 Hashed Message:", eipCompatibleMessage);
 console.log("Account:", account);
 console.log("Signature:", signature);
