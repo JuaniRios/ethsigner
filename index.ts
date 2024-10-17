@@ -1,4 +1,4 @@
-import { Wallet, getBytes, hashMessage } from "ethers";
+import { Wallet, getBytes, hashMessage, verifyMessage } from "ethers";
 import { parseArgs } from "util";
 
 const defaultMessage = "abcdef123456"; // Replace this with your message
@@ -26,3 +26,7 @@ console.log("Input Message:", values.message);
 console.log("EIP-191 Hashed Message:", eipCompatibleMessage);
 console.log("Account:", account);
 console.log("Signature:", signature);
+
+
+const isValidationSuccessful = verifyMessage(messageBytes, signature) === account;
+console.log("Validation:", isValidationSuccessful ? "Success" : "Failure");
