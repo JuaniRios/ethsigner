@@ -27,6 +27,6 @@ console.log("EIP-191 Hashed Message:", eipCompatibleMessage);
 console.log("Account:", account);
 console.log("Signature:", signature);
 
-
+console.log("Message Bytes: ", messageBytes);
 const isValidationSuccessful = verifyMessage(messageBytes, signature) === account;
 console.log("Validation:", isValidationSuccessful ? "Success" : "Failure");
