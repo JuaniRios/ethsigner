@@ -1,6 +1,5 @@
-import { Wallet, getBytes } from "ethers";
+import { Wallet, getBytes, hashMessage } from "ethers";
 import { parseArgs } from "util";
-import { encodeHex } from "@std/encoding/hex";
 
 const defaultMessage = "abcdef123456"; // Replace this with your message
 
@@ -17,12 +16,14 @@ const { values } = parseArgs({
   required: ["message"],
 });
 
-const messageHex = encodeHex(values.message.trim());
 const wallet = Wallet.createRandom();
 const account = wallet.address;
-const messageBytes = getBytes(`0x${messageHex}`);
+const messageBytes = getBytes(`0x${values.message}`);
+
+const eipCompatibleMessage = hashMessage(messageBytes).replace("0x", "");
 const signature = await wallet.signMessage(messageBytes);
 
-console.log("Message:", messageHex);
+console.log("Raw Message:", values.message);
+console.log("EIP-191 Message:", eipCompatibleMessage);
 console.log("Account:", account);
 console.log("Signature:", signature);
