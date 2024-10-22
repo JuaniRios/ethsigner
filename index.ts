@@ -45,30 +45,41 @@ console.log('EIP-191 Hashed Message:', eipCompatibleMessage);
 console.log('Ethereum Account:', account); // Print Ethereum account
 console.log('Signature:', signature); // Print the signature
 
-// Verify the signature
-const isValidationSuccessful =
-	verifyMessage(messageBytes, signature) === account;
-console.log('Ether.js validation:', isValidationSuccessful ? '✅ Success' : 'Failure');
 
+// Verify the Etherum signature
 if (getBytes(signature).length === 65) {
 	console.log('Signature is 65 bytes long');
 } else {
 	console.error('Signature length is incorrect:', getBytes(signature).length);
 }
 
-// create Alice based on the development seed
+const isValidationSuccessful =
+	verifyMessage(messageBytes, signature) === account;
+console.log(
+	'Ether.js validation:',
+	isValidationSuccessful ? '✅ Success' : 'Failure',
+);
+
+// Create Alice based on the development seed, using polkadot.js
 await cryptoWaitReady();
 const keyring = new Keyring({ type: 'sr25519', ss58Format: 41 });
 const alice = keyring.addFromUri('//Alice');
 
-// create the message, actual signature and verify
+// Sign the message with Alice's private key
 const polkadot_signature = alice.sign(messageBytes);
 const isValid = alice.verify(messageBytes, polkadot_signature, alice.publicKey);
 
 if (getBytes(polkadot_signature).length === 64) {
-  console.log(`✅ The Polkadot.js signature is ${isValid ? 'valid' : 'invalid'}`);
-  console.log('Polkadot.js signature:', u8aToHex(polkadot_signature));
-  console.log(`Signer's address: ${alice.address}, as hex: ${u8aToHex(alice.publicKey)}`);
+	console.log(
+		`✅ The Polkadot.js signature is ${isValid ? 'valid' : 'invalid'}`,
+	);
+	console.log('Polkadot.js signature:', u8aToHex(polkadot_signature));
+	console.log(
+		`Signer's address: ${alice.address}, as hex: ${u8aToHex(alice.publicKey)}`,
+	);
 } else {
-	console.error('Polkadot.js signature length is incorrect:', getBytes(polkadot_signature).length);
+	console.error(
+		'Polkadot.js signature length is incorrect:',
+		getBytes(polkadot_signature).length,
+	);
 }
