@@ -13,5 +13,5 @@ bun install
 To run:
 
 ```bash
-bun run index.ts --message helloworld
+bun run index.ts
 ```
