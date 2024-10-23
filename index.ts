@@ -17,15 +17,9 @@ const privateKey =
 const wallet = new Wallet(privateKey);
 
 const account = wallet.address;
-console.log(`hello is ${toUtf8Bytes('hello')}`);
-console.log(`len: ${message.length}`); // Get the wallet address
-const msgLen = toUtf8Bytes(String(message.length))
-console.log(`msgLen {${u8aToHex(msgLen)}}`);
-console.log(`msgLen {${msgLen}}`);
 const eipCompatibleMessage = hashMessage(message);
 const signature = await wallet.signMessage(message);
 
-console.log('Polimec Account (SS58):', polimecAccount);
 console.log(
 	"Message:",
 	message,
