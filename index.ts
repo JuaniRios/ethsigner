@@ -1,45 +1,34 @@
-import { Wallet, getBytes, hashMessage, verifyMessage } from 'ethers';
+import { Wallet, getBytes, hashMessage, verifyMessage, toUtf8Bytes } from 'ethers';
 import { decodeAddress, cryptoWaitReady } from '@polkadot/util-crypto'; // Import the Polkadot.js utility
-import { u8aConcat, bnToU8a, stringToU8a, u8aToHex } from '@polkadot/util'; // Utility to handle byte arrays and strings
+import { u8aConcat, bnToU8a, stringToU8a, u8aToHex } from '@polkadot/util';
 import { Keyring } from '@polkadot/keyring';
 
-const polimecAccount = '5DdcCTfRRysSRgDyWw49wwfQGJBs4Faif8wuEnj2mNuZgFqd';
+const polimecAccount = '57qwwU823gziGcpWcQB8a3Pycp3a14xCUCPmd75jJXK5QArX';
 const projectId = 0;
 const nonce = 0;
 
-// Decode Polimec account from SS58 format
-const polimecAccountBytes = decodeAddress(polimecAccount);
-// Convert projectId and nonce to byte arrays
-const projectIdBytes = bnToU8a(projectId, { bitLength: 32, isLe: true }); // Assuming 32-bit project ID
-const nonceBytes = bnToU8a(nonce, { bitLength: 32, isLe: true }); // Assuming 32-bit nonce
 
-// Convert "-" to its ASCII byte representation
-const separatorBytes = stringToU8a('-');
 
 // Concatenate the byte arrays with the ASCII hyphen as a separator
-const messageBytes = u8aConcat(
-	polimecAccountBytes,
-	separatorBytes,
-	projectIdBytes,
-	separatorBytes,
-	nonceBytes,
-);
-const messageHex = u8aToHex(messageBytes);
-
+const message = `polimec account: ${polimecAccount} - project id: ${projectId} - nonce: ${nonce}`;
 // Set a fixed private key for consistent wallet creation
 const privateKey =
 	'0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
 const wallet = new Wallet(privateKey);
 
-const account = wallet.address; // Get the wallet address
-const eipCompatibleMessage = hashMessage(messageBytes);
-const signature = await wallet.signMessage(messageBytes);
+const account = wallet.address;
+console.log(`hello is ${toUtf8Bytes('hello')}`);
+console.log(`len: ${message.length}`); // Get the wallet address
+const msgLen = toUtf8Bytes(String(message.length))
+console.log(`msgLen {${u8aToHex(msgLen)}}`);
+console.log(`msgLen {${msgLen}}`);
+const eipCompatibleMessage = hashMessage(message);
+const signature = await wallet.signMessage(message);
 
 console.log('Polimec Account (SS58):', polimecAccount);
-console.log('Decoded Account Bytes:', polimecAccountBytes);
 console.log(
-	"Message Bytes (Account + '-' + Project ID + '-' + Nonce):",
-	messageHex,
+	"Message:",
+	message,
 );
 console.log('EIP-191 Hashed Message:', eipCompatibleMessage);
 console.log('Ethereum Account:', account); // Print Ethereum account
@@ -54,7 +43,7 @@ if (getBytes(signature).length === 65) {
 }
 
 const isValidationSuccessful =
-	verifyMessage(messageBytes, signature) === account;
+	verifyMessage(message, signature) === account;
 console.log(
 	'Ether.js validation:',
 	isValidationSuccessful ? '✅ Success' : 'Failure',
@@ -66,8 +55,8 @@ const keyring = new Keyring({ type: 'sr25519', ss58Format: 41 });
 const alice = keyring.addFromUri('//Alice');
 
 // Sign the message with Alice's private key
-const polkadot_signature = alice.sign(messageBytes);
-const isValid = alice.verify(messageBytes, polkadot_signature, alice.publicKey);
+const polkadot_signature = alice.sign(message);
+const isValid = alice.verify(message, polkadot_signature, alice.publicKey);
 
 if (getBytes(polkadot_signature).length === 64) {
 	console.log(
