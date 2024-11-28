@@ -17,6 +17,7 @@ const server = serve({
         outdir: './public',
         target: 'browser',
         format: 'esm',
+        sourcemap: 'external',
       });
       
       if (!result.success) {
